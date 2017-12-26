@@ -1,10 +1,8 @@
 package com.bqteam.appforlearn.function.refresh_loadmore;
 
-import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,6 +55,11 @@ public class RefreshLoadmoreLayout extends ViewGroup {
      */
     public static final int STATUS_LOADMOREING = -3;
 
+    /**
+     * 加载完毕，没有更多数据
+     */
+    public static final int STATUS_LOADMORE_NO_MORE_DATA = -4;
+
     private View headerView;
     private View footerView;
 
@@ -72,13 +75,12 @@ public class RefreshLoadmoreLayout extends ViewGroup {
 
     private boolean enableRefresh = false;
     private boolean enableLoadmore = false;
+    private boolean loadmoreNoMoreData = false;
 
     /**
      * 当前状态刷新／加载
      */
     private int status = STATUS_NORMAL;
-
-    private int layoutContentHeight;
     private int headerViewHeight;
     private int footerViewHeight;
 
@@ -125,24 +127,58 @@ public class RefreshLoadmoreLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        /*
+        按照 onFinishInflate() 方法中的添加顺序
+        getChildAt(0)： contentView
+        getChildAt(1)： headerView
+        getChildAt(2)： footerView
+         */
+        int viewWidth = headerView.getMeasuredWidth();
         headerViewHeight = headerView.getMeasuredHeight();
         footerViewHeight = footerView.getMeasuredHeight();
-        layoutContentHeight = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            if (child == headerView) {
-                // 头视图隐藏在顶端
-                child.layout(0, 0 - child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
-            } else if (child == footerView) {
-                // 尾视图隐藏在layout所有内容视图之后
-                child.layout(0, layoutContentHeight, child.getMeasuredWidth(),
-                        layoutContentHeight + child.getMeasuredHeight());
-            } else {
-                child.layout(0, layoutContentHeight, child.getMeasuredWidth(),
-                        layoutContentHeight + child.getMeasuredHeight());
-                layoutContentHeight += child.getMeasuredHeight();
-            }
+
+        // 内容视图放在中间
+        View contentView = getChildAt(0);
+        int contentHeight = contentView.getMeasuredHeight();
+        contentView.layout(0, 0, viewWidth, contentHeight);
+        // 头视图隐藏在顶端
+        headerView.layout(0, 0 - headerViewHeight, viewWidth, 0);
+        // 尾视图隐藏在layout所有内容视图之后
+        footerView.layout(0, contentHeight, footerViewHeight, contentHeight + footerViewHeight);
+    }
+
+    /**
+     * 是否需要拦截子 view 滑动事件
+     *
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        boolean intercept = false;
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                intercept = false;
+                lastMoveY = ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                View child = getChildAt(0);
+                if (ev.getY() > lastMoveY) {
+                    //下滑操作，如果子 view 还能下滑就不拦截
+                    intercept = !child.canScrollVertically(-1);
+                }
+                if (ev.getY() < lastMoveY) {
+                    //上滑操作，如果子 view 还能上滑就不拦截
+                    intercept = !child.canScrollVertically(1);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                intercept = false;
+                break;
+            default:
+                break;
         }
+        return intercept;
     }
 
     @Override
@@ -155,30 +191,38 @@ public class RefreshLoadmoreLayout extends ViewGroup {
                 float dy = lastMoveY - event.getY();
                 if (enableScroll(dy)) {
                     scrollBy(0, (int) dy);
-                    setStatus(true);
                     lastMoveY = event.getY();
+
+                    setStatus(true);
+                    refreshViews();
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 setStatus(false);
+                refreshViews();
 
                 switch (status) {
-                    case STATUS_NORMAL:
-                        smoothScrollTo(0);
-                        break;
                     case STATUS_REFRESHING:
                         smoothScrollTo(0 - headerViewHeight / 8);
+                        if (enableRefresh) {
+                            refreshListener.refresh();
+                        }
                         break;
                     case STATUS_LOADMOREING:
                         smoothScrollTo(footerViewHeight / 8);
+                        if (enableLoadmore) {
+                            loadmoreListener.loadmore();
+                        }
                         break;
                     default:
+                        smoothScrollTo(0);
                         break;
                 }
                 break;
             default:
                 break;
         }
+
         return true;
     }
 
@@ -189,17 +233,41 @@ public class RefreshLoadmoreLayout extends ViewGroup {
      * @return
      */
     private boolean enableScroll(float dy) {
+        if (!enableRefresh && !enableLoadmore) {
+            return false;
+        }
+
+        //如果视图向下滑动并且滑动距离超过 headerViewHeight / 4 则禁止再滑动
+        if (dy < 0 && (0 - getScrollY()) > headerViewHeight / 4) {
+            return false;
+        }
+
+        //如果视图向上滑动并且滑动距离超过 footerViewHeight / 4 则禁止再滑动
+        if (dy > 0 && getScrollY() > footerViewHeight / 4) {
+            return false;
+        }
 
         if (!enableRefresh) {
-
+            //禁止刷新时不能下拉
+            if (getScrollY() <= 0 && dy < 0) {
+                return false;
+            }
         }
         if (!enableLoadmore) {
-
+            //禁止加载时不能上拉
+            if (getScrollY() >= 0 && dy > 0) {
+                return false;
+            }
+        } else {
+            if (loadmoreNoMoreData) {
+                //如果未禁止加载，并且没有更多数据了，上滑距离超过 headerViewHeight / 8 禁止再滑动
+                if (getScrollY() > footerViewHeight / 8) {
+                    return false;
+                }
+            }
         }
-        //如果视图向下滑动并且滑动距离超过 headerViewHeight / 4 则禁止再滑动
-        //如果视图向上滑动并且滑动距离超过 footerViewHeight / 4 则禁止再滑动
-        return !(dy < 0 && (0 - getScrollY()) > headerViewHeight / 4)
-                && !(dy > 0 && getScrollY() > footerViewHeight / 4);
+
+        return true;
     }
 
     /**
@@ -219,11 +287,13 @@ public class RefreshLoadmoreLayout extends ViewGroup {
                 }
             }
             if (scrollY > 0) {
-                if (scrollY < footerViewHeight / 8) {
-                    status = STATUS_PULL_TO_LOADMORE;
-                }
-                if (scrollY >= footerViewHeight / 8 && scrollY < footerViewHeight / 4) {
-                    status = STATUS_RELEASE_TO_LOADMORE;
+                if (!loadmoreNoMoreData) {
+                    if (scrollY < footerViewHeight / 8) {
+                        status = STATUS_PULL_TO_LOADMORE;
+                    }
+                    if (scrollY >= footerViewHeight / 8 && scrollY < footerViewHeight / 4) {
+                        status = STATUS_RELEASE_TO_LOADMORE;
+                    }
                 }
             }
         } else {
@@ -242,7 +312,6 @@ public class RefreshLoadmoreLayout extends ViewGroup {
                     break;
             }
         }
-        refreshViews();
     }
 
     /**
@@ -280,6 +349,11 @@ public class RefreshLoadmoreLayout extends ViewGroup {
                 loadmoreProgressBar.setVisibility(VISIBLE);
                 loadmoreTv.setText(R.string.loadmore_ing);
                 break;
+            case STATUS_LOADMORE_NO_MORE_DATA:
+                loadmoreImg.setVisibility(GONE);
+                loadmoreProgressBar.setVisibility(GONE);
+                loadmoreTv.setText(R.string.loadmore_no_more_data);
+                break;
             default:
                 break;
         }
@@ -306,14 +380,13 @@ public class RefreshLoadmoreLayout extends ViewGroup {
     }
 
 
-
     /////////////////////////
     // 外部方法与接口
 
     /**
      * 下拉刷新接口
      */
-    private interface OnRefreshListener {
+    public interface OnRefreshListener {
         /**
          * 下拉刷新方法
          */
@@ -328,7 +401,7 @@ public class RefreshLoadmoreLayout extends ViewGroup {
     /**
      * 上拉加载接口
      */
-    private interface OnLoadmoreListener {
+    public interface OnLoadmoreListener {
         /**
          * 上拉加载方法
          */
@@ -338,5 +411,30 @@ public class RefreshLoadmoreLayout extends ViewGroup {
     public void setOnLoadmoreListener(OnLoadmoreListener listener) {
         loadmoreListener = listener;
         enableLoadmore = true;
+    }
+
+    /**
+     * 刷新结束
+     */
+    public void refreshEnd() {
+        status = STATUS_NORMAL;
+        refreshViews();
+        smoothScrollTo(0);
+
+        if (enableLoadmore) {
+            loadmoreNoMoreData = false;
+        }
+    }
+
+    /**
+     * 加载结束
+     *
+     * @param noMoreData 还有没有数据
+     */
+    public void loadmoreEnd(boolean noMoreData) {
+        loadmoreNoMoreData = noMoreData;
+        status = noMoreData ? STATUS_LOADMORE_NO_MORE_DATA : STATUS_NORMAL;
+        refreshViews();
+        smoothScrollTo(0);
     }
 }
