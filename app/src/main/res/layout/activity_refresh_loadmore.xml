@@ -45,6 +45,18 @@
                     android:text="test"
                     android:gravity="center"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:text="test"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:text="test"
+                    android:gravity="center"/>
+
             <LinearLayout
                 android:id="@+id/test"
                 android:layout_width="match_parent"

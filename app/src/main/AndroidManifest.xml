@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".function.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -17,6 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".function.refresh_loadmore.RefreshLoadmoreActivity">
+        </activity>
+        <activity android:name=".function.mode.DesignModeActivity">
+        </activity>
+        <activity android:name=".function.mode.observer.ModeObserverActivity">
         </activity>
     </application>
 
