@@ -1,5 +1,7 @@
 package com.bqteam.appforlearn.function.mode.observer;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -24,6 +26,10 @@ public class ModeObserverActivity extends AppCompatActivity {
     @BindView(R.id.weatherData_weather_tv)
     TextView weatherTv;
 
+    private static String CODE_ADDRESS = "https://github" +
+            ".com/Charles1198/AppForLearn-android/blob/master/app/src/main/java/com/bqteam/appforlearn/function/mode" +
+            "/observer/ModeObserverActivity.java";
+
     private WeatherData weatherData;
 
     @Override
@@ -33,6 +39,7 @@ public class ModeObserverActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         findViewById(R.id.weatherData_update_btn).setOnClickListener(v -> updateWeatherData());
+        findViewById(R.id.checkCode_btn).setOnClickListener(v -> checkCode());
 
         weatherData = new WeatherData();
         BasicDisplay basicDisplay = new BasicDisplay(weatherData);
@@ -41,7 +48,13 @@ public class ModeObserverActivity extends AppCompatActivity {
     }
 
     private void updateWeatherData() {
-        weatherData.setData((float)(Math.random() * 100), (float)(Math.random() * 100), (float)(Math.random() * 100));
+        weatherData.setData((float) (Math.random() * 100), (float) (Math.random() * 100),
+                (float) (Math.random() * 100));
+    }
+
+    private void checkCode() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(CODE_ADDRESS));
+        startActivity(intent);
     }
 
     public class BasicDisplay implements Observer, DisplayElement {
@@ -87,7 +100,7 @@ public class ModeObserverActivity extends AppCompatActivity {
             float averageTemperature = 0;
 
             float empty = 0;
-            for (float temperature: temperatureHistory) {
+            for (float temperature : temperatureHistory) {
                 if (maxTemperature < temperature) {
                     maxTemperature = temperature;
                 }
@@ -98,8 +111,8 @@ public class ModeObserverActivity extends AppCompatActivity {
             }
             averageTemperature = empty / temperatureHistory.size();
 
-            String s = "温度统计\n最高温度:" + maxTemperature + ", 最低温度:" + minTemperature + ", 平均温度:"
-                    + averageTemperature;
+            String s = "温度统计\n最高温度:" + maxTemperature + ", 最低温度:" + minTemperature
+                    + ", 平均温度:" + averageTemperature;
             statisticTv.setText(s);
         }
 
