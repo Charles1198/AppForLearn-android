@@ -22,6 +22,8 @@
         </activity>
         <activity android:name=".function.mode.observer.ModeObserverActivity">
         </activity>
+        <activity android:name=".function.canvas.CanvasActivity">
+        </activity>
     </application>
 
 </manifest>
