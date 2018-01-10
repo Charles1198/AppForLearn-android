@@ -19,8 +19,8 @@ public class Point {
     /**
      * 圆点横向和纵向移动速度
      */
-    private float vx = (float) (Math.random() - 0.5);
-    private float vy = (float) Math.random();
+    private float vx = (float) (Math.random() - 0.5) * 2;
+    private float vy = (float) Math.random() * 2;
 
     public Point(float x, float y, float r, int alpha) {
         this.x = x;

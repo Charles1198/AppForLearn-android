@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.TimerTask;
  * @date 2018/1/10
  */
 
-public class CanvasMovingPoint extends View {
+public class MovingPointView extends View {
     /**
      * 画布长宽
      */
@@ -33,17 +32,20 @@ public class CanvasMovingPoint extends View {
      */
     private Paint paint;
 
-    private int pointCount = 100;
+    private int pointCount = 1000;
     private List<Point> pointList = new ArrayList<>();
 
+    /**
+     * 定时器
+     */
     private Timer timer;
 
-    public CanvasMovingPoint(Context context) {
+    public MovingPointView(Context context) {
         super(context);
         initPatin();
     }
 
-    public CanvasMovingPoint(Context context, @Nullable AttributeSet attrs) {
+    public MovingPointView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initPatin();
     }
@@ -67,11 +69,6 @@ public class CanvasMovingPoint extends View {
         final Handler mainHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                if (pointList.size() > 0) {
-                    for (Point p : pointList) {
-                        p.move(width, height);
-                    }
-                }
                 invalidate();
             }
         };
@@ -81,7 +78,6 @@ public class CanvasMovingPoint extends View {
             @Override
             public void run() {
                 mainHandler.sendMessage(new Message());
-
             }
         }, 60, 60);
     }
@@ -105,11 +101,8 @@ public class CanvasMovingPoint extends View {
             paint.setARGB(p.getAlpha(), 0, 0, 0);
             paint.setStrokeWidth(p.getR());
             canvas.drawCircle(p.getX(), p.getY(), p.getR(), paint);
+
+            p.move(width, height);
         }
-
-        Log.d("point", "" + pointList.get(0).getY());
-
     }
-
-
 }
