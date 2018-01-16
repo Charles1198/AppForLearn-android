@@ -32,7 +32,7 @@ public class MovingPointView extends View {
      */
     private Paint paint;
 
-    private int pointCount = 1000;
+    private int pointCount = 60;
     private List<Point> pointList = new ArrayList<>();
 
     /**
@@ -59,6 +59,19 @@ public class MovingPointView extends View {
         initPoint();
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    /**
+     * 创建画笔
+     */
     private void initPatin() {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         initTimer();
@@ -82,6 +95,9 @@ public class MovingPointView extends View {
         }, 60, 60);
     }
 
+    /**
+     * 构造点点数组
+     */
     private void initPoint() {
         if (pointList.size() > 0) {
             return;

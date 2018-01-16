@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.bqteam.appforlearn.R;
+import com.bqteam.appforlearn.function.boardcast.BroadcastActivity;
 import com.bqteam.appforlearn.function.canvas.CanvasActivity;
 import com.bqteam.appforlearn.function.mode.DesignModeActivity;
 import com.bqteam.appforlearn.function.refresh_loadmore.RefreshLoadmoreActivity;
+import com.bqteam.appforlearn.function.service.ServiceActivity;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ import java.util.List;
  * @author charles
  */
 public class MainActivity extends AppCompatActivity {
-    private String[] entranceList = {"上拉加载与下拉刷新", "设计模式", "canvas"};
+    private String[] entranceList = {"上拉加载与下拉刷新", "设计模式", "Canvas", "Service", "Broadcast"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 2:
                 startActivity(new Intent(this, CanvasActivity.class));
+                break;
+            case 3:
+                startActivity(new Intent(this, ServiceActivity.class));
+                break;
+            case 4:
+                startActivity(new Intent(this, BroadcastActivity.class));
                 break;
             default:
                 break;

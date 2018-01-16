@@ -1,7 +1,5 @@
 package com.bqteam.appforlearn.function.canvas;
 
-import android.graphics.Color;
-
 /**
  * @author charles
  * @date 2018/1/10
@@ -30,7 +28,7 @@ public class Point {
     }
 
     /**
-     * 移动圆点
+     * 移动圆点，范围不超过画布
      *
      * @param width 画布宽
      * @param height 画布高

@@ -29,7 +29,7 @@ public class MovingPointSurfaceView extends SurfaceView implements SurfaceHolder
      */
     private Paint paint;
 
-    private int pointCount = 1000;
+    private int pointCount = 60;
     private List<Point> pointList = new ArrayList<>();
 
     private SurfaceHolder surfaceHolder;
