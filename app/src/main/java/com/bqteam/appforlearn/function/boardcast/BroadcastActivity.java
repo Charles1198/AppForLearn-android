@@ -96,7 +96,9 @@ public class BroadcastActivity extends AppCompatActivity {
     }
 
     private void unregisterBroadcast() {
-        unregisterReceiver(downloadBroadcast);
+        if (downloadBroadcast != null) {
+            unregisterReceiver(downloadBroadcast);
+        }
     }
 
     private void startDownload() {

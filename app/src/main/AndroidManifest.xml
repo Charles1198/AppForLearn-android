@@ -26,10 +26,16 @@
         </activity>
         <activity android:name=".function.service.ServiceActivity">
         </activity>
+
         <service android:name=".function.service.TestService"/>
+
         <activity android:name=".function.boardcast.BroadcastActivity">
         </activity>
+
         <service android:name=".function.boardcast.BroadcastService"/>
+
+        <activity android:name=".function.panorama.PanoramaActivity">
+        </activity>
     </application>
 
 </manifest>
