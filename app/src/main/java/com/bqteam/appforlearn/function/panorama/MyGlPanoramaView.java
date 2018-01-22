@@ -36,10 +36,11 @@ public class MyGlPanoramaView extends RelativeLayout {
     private int imageHeight = 0;
     private int imageWidth = 0;
 
-    private int targetX;
-    private int targetY;
+    private float targetX;
+    private float targetY;
     private float diffDegreeX;
     private float diffDegreeY;
+    private String targetText = "";
 
 
     private Handler mHandlers = new Handler();
@@ -118,9 +119,13 @@ public class MyGlPanoramaView extends RelativeLayout {
         mGlSurfaceView.setRenderer(mBall);
     }
 
-    public void setTarget(int x, int y) {
+    public void setTarget(float x, float y) {
         targetX = x;
         targetY = y;
+    }
+
+    public void setText(String text) {
+        targetText = text;
     }
 
     private void rotate() {
@@ -158,7 +163,7 @@ public class MyGlPanoramaView extends RelativeLayout {
 
     private void addText() {
         testTv = new TextView(mContext);
-        testTv.setText("test");
+        testTv.setText(targetText);
         testTv.setTextColor(Color.WHITE);
 
         LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -178,9 +183,9 @@ public class MyGlPanoramaView extends RelativeLayout {
         double x = 0 - 600 * Math.cos(yAngle / 180 * Math.PI);
         double y = 10 * xAngle;
 
-        if (yAngle < 50 || yAngle > 130) {
+        if (yAngle < 55 || yAngle > 125) {
             testTv.setVisibility(INVISIBLE);
-        } else if (Math.abs(xAngle) > 40) {
+        } else if (Math.abs(xAngle) > 35) {
             testTv.setVisibility(INVISIBLE);
         } else {
             testTv.setVisibility(VISIBLE);
@@ -192,8 +197,8 @@ public class MyGlPanoramaView extends RelativeLayout {
     }
 
     private void calculateDiff() {
-        diffDegreeX = (targetX / (imageWidth / 2) - 1) * 180;
-        diffDegreeY = (targetY / (imageHeight / 2) - 1) * 90;
+        diffDegreeX = (targetX / 1920 - 1) * 180;
+        diffDegreeY = (targetY / 960 - 1) * 90;
         LogUtil.d(diffDegreeX, diffDegreeY);
     }
 }

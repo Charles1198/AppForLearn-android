@@ -22,6 +22,7 @@ public class PanoramaActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         panoramaView.setPanoramaImage(R.drawable.panorama_test);
-        panoramaView.setTarget(1500, 900);
+        panoramaView.setTarget(1300, 975);
+        panoramaView.setText("这是一个 ATM 机");
     }
 }
