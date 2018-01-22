@@ -1,15 +1,19 @@
 package com.bqteam.appforlearn.function.panorama;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.bqteam.appforlearn.util.LogUtil;
 import com.zph.glpanorama.glutils.Ball;
 import com.zph.glpanorama.glutils.IViews;
 
@@ -27,89 +31,108 @@ public class MyGlPanoramaView extends RelativeLayout {
     private float preDegree = 0.0F;
     private Ball mBall;
 
+    private TextView testTv;
+
+    private int imageHeight = 0;
+    private int imageWidth = 0;
+
+    private int targetX;
+    private int targetY;
+    private float diffDegreeX;
+    private float diffDegreeY;
+
 
     private Handler mHandlers = new Handler();
     int yy = 0;
 
     public MyGlPanoramaView(Context context) {
         super(context);
-        this.mContext = context;
-        this.init();
+        mContext = context;
+        init();
     }
 
     public MyGlPanoramaView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
-        this.init();
+        mContext = context;
+        init();
     }
 
     public MyGlPanoramaView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.mContext = context;
-        this.init();
+        mContext = context;
+        init();
     }
 
     private void init() {
-        this.initView();
+        initView();
     }
 
     private void initView() {
-        LayoutInflater.from(this.mContext).inflate(com.zph.glpanorama.R.layout.panoramalayout, this);
-        this.mGlSurfaceView = this.findViewById(com.zph.glpanorama.R.id.mIViews);
-        this.img = this.findViewById(com.zph.glpanorama.R.id.img);
-        this.img.setOnClickListener(view -> zero());
+        LayoutInflater.from(mContext).inflate(com.zph.glpanorama.R.layout.panoramalayout, this);
+        mGlSurfaceView = findViewById(com.zph.glpanorama.R.id.mIViews);
+        img = findViewById(com.zph.glpanorama.R.id.img);
+        img.setOnClickListener(view -> zero());
+
+        addText();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        if (imageWidth == 0) {
+            imageWidth = getMeasuredWidth();
+            imageHeight = getMeasuredHeight();
+            addText();
+            calculateDiff();
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float y = event.getY();
         float x = event.getX();
-        switch (event.getAction()) {
-            case 1:
-                Log.d("down", "onTouchEvent: " + event.getX() + ", " + event.getY() + ", "
-                        + mBall.getfinalMVPMatrix()[0] + ", "
-                        + mBall.getfinalMVPMatrix()[1] + ", "
-                        + mBall.getfinalMVPMatrix()[2]);
-                break;
-            case 2:
-                float dy = y - this.mPreviousYs;
-                float dx = x - this.mPreviousXs;
-                this.mBall.yAngle += dx * 0.3F;
-                this.mBall.xAngle += dy * 0.3F;
-                if (this.mBall.xAngle < -50.0F) {
-                    this.mBall.xAngle = -50.0F;
-                } else if (this.mBall.xAngle > 50.0F) {
-                    this.mBall.xAngle = 50.0F;
-                }
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            float dy = y - mPreviousYs;
+            float dx = x - mPreviousXs;
+            mBall.yAngle += dx * 0.3F;
+            mBall.xAngle += dy * 0.3F;
+            if (mBall.xAngle < -50.0F) {
+                mBall.xAngle = -50.0F;
+            } else if (mBall.xAngle > 50.0F) {
+                mBall.xAngle = 50.0F;
+            }
 
-                this.rotate();
-                break;
-            default:
-                break;
+            rotate();
+            moveText(mBall.xAngle, mBall.yAngle);
         }
 
-
-        this.mPreviousYs = y;
-        this.mPreviousXs = x;
+        mPreviousYs = y;
+        mPreviousXs = x;
         return true;
     }
 
     public void setPanoramaImage(int imgId) {
-        this.mGlSurfaceView.setEGLContextClientVersion(2);
-        this.mBall = new Ball(this.mContext, imgId);
-        this.mGlSurfaceView.setRenderer(this.mBall);
+        mGlSurfaceView.setEGLContextClientVersion(2);
+        mBall = new Ball(mContext, imgId);
+        mGlSurfaceView.setRenderer(mBall);
+    }
+
+    public void setTarget(int x, int y) {
+        targetX = x;
+        targetY = y;
     }
 
     private void rotate() {
-        RotateAnimation anim = new RotateAnimation(this.preDegree, -this.mBall.yAngle, 1, 0.5F, 1, 0.5F);
+        RotateAnimation anim = new RotateAnimation(preDegree, -mBall.yAngle, 1, 0.5F, 1, 0.5F);
         anim.setDuration(200L);
-        this.img.startAnimation(anim);
-        this.preDegree = -this.mBall.yAngle;
+        img.startAnimation(anim);
+        preDegree = -mBall.yAngle;
     }
 
     private void zero() {
-        this.yy = (int) ((this.mBall.yAngle - 90.0F) / 10.0F);
-        this.mHandlers.post(new Runnable() {
+        yy = (int) ((mBall.yAngle - 90.0F) / 10.0F);
+        mHandlers.post(new Runnable() {
             @Override
             public void run() {
                 if (yy != 0) {
@@ -131,5 +154,46 @@ public class MyGlPanoramaView extends RelativeLayout {
                 mBall.xAngle = 0.0F;
             }
         });
+    }
+
+    private void addText() {
+        testTv = new TextView(mContext);
+        testTv.setText("test");
+        testTv.setTextColor(Color.WHITE);
+
+        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = imageWidth / 2;
+        lp.topMargin = imageHeight / 2;
+        addView(testTv, lp);
+    }
+
+    private void moveText(float xAngle, float yAngle) {
+        yAngle += diffDegreeX;
+        xAngle += diffDegreeY;
+        if (yAngle > 0) {
+            yAngle = yAngle % 360;
+        } else {
+            yAngle = yAngle % 360 + 360;
+        }
+        double x = 0 - 600 * Math.cos(yAngle / 180 * Math.PI);
+        double y = 10 * xAngle;
+
+        if (yAngle < 50 || yAngle > 130) {
+            testTv.setVisibility(INVISIBLE);
+        } else if (Math.abs(xAngle) > 40) {
+            testTv.setVisibility(INVISIBLE);
+        } else {
+            testTv.setVisibility(VISIBLE);
+            LayoutParams lp = (LayoutParams) testTv.getLayoutParams();
+            lp.leftMargin = (int) (imageWidth / 2 + x);
+            lp.topMargin = (int) (imageHeight / 2 + y);
+            testTv.setLayoutParams(lp);
+        }
+    }
+
+    private void calculateDiff() {
+        diffDegreeX = (targetX / (imageWidth / 2) - 1) * 180;
+        diffDegreeY = (targetY / (imageHeight / 2) - 1) * 90;
+        LogUtil.d(diffDegreeX, diffDegreeY);
     }
 }

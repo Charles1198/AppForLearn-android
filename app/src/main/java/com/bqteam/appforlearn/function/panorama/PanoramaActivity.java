@@ -22,5 +22,6 @@ public class PanoramaActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         panoramaView.setPanoramaImage(R.drawable.panorama_test);
+        panoramaView.setTarget(1500, 900);
     }
 }
