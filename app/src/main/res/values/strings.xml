@@ -8,4 +8,7 @@
     <string name="release_to_loadmore">松开即可加载</string>
     <string name="loadmore_ing">正在加载</string>
     <string name="loadmore_no_more_data">没有更多数据了</string>
+
+    <string name="app_key">GwMbpbgrr0pROBbG7q7M6GcUhwIxfp73PSqGfVQKjr8=</string>
+    <string name="camera_open_fail">Camera open fails. Please check camera permission is allowed</string>
 </resources>

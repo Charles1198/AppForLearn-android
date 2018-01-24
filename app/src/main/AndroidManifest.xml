@@ -2,6 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.bqteam.appforlearn">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- 允许程序打开网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 允许程序获取网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 允许程序访问WiFi网络信息 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!--允许程序访问CellID或WiFi热点来获取粗略的位置-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="ecba0e6649f9b7ce93ef94d636b74f79">
+        </meta-data>
+
         <activity android:name=".function.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -34,7 +50,17 @@
 
         <service android:name=".function.boardcast.BroadcastService"/>
 
-        <activity android:name=".function.panorama.PanoramaActivity">
+        <activity
+            android:name=".function.panorama.PanoramaActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+        </activity>
+        <activity android:name=".function.maxst.PermissionCheckActivity">
+        </activity>
+        <activity
+            android:name=".function.maxst.MaxstActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+        </activity>
+        <activity android:name=".function.map.GaodeMapActivity">
         </activity>
     </application>
 

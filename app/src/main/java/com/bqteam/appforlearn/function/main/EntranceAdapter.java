@@ -38,7 +38,6 @@ public class EntranceAdapter extends RecyclerView.Adapter<EntranceAdapter.Entran
 
     @Override
     public int getItemCount() {
-        Log.d("getItemCount", "getItemCount: " + (entranceList == null ? 0 : entranceList.length));
         return entranceList == null ? 0 : entranceList.length;
     }
 

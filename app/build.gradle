@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'keyHouse'
+            keyPassword '1198040298'
+            storePassword '1198040298'
+            storeFile file('/Users/charles/Desktop/KeyHouse/KeyHouse')
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.bqteam.appforlearn"
@@ -35,4 +43,13 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.github.CN-ZPH:weibo360panorama:v1.0.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    //AR
+    implementation files('libs/com.osterhoutgroup.api.ext.jar')
+    implementation files('libs/MaxstAR.jar')
+    implementation files('libs/VideoPlayer.jar')
+    //申请权限
+    compile 'gun0912.ted:tedpermission:1.0.0'
+    //高德地图
+    compile 'com.amap.api:3dmap:5.7.0'
+    compile 'com.amap.api:location:3.7.0'
 }

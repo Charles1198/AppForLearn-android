@@ -25,65 +25,50 @@ import com.zph.glpanorama.glutils.IViews;
 public class MyGlPanoramaView extends RelativeLayout {
     private Context mContext;
     private IViews mGlSurfaceView;
-    private ImageView img;
     private float mPreviousYs;
     private float mPreviousXs;
-    private float preDegree = 0.0F;
     private Ball mBall;
 
-    private TextView testTv;
+    private InfoPopView infoPopView;
+    private LayoutParams lp;
 
-    private int imageHeight = 0;
-    private int imageWidth = 0;
+    private int viewHeight = 0;
+    private int viewWidth = 0;
+    private int popViewWidth = 0;
 
+    /**
+     * 需要弹出 InfoPopView 的位置
+     */
     private float targetX;
     private float targetY;
+
+    /**
+     * InfoPopView 的位置与画面中心的相对角度
+     */
     private float diffDegreeX;
     private float diffDegreeY;
-    private String targetText = "";
-
-
-    private Handler mHandlers = new Handler();
-    int yy = 0;
-
-    public MyGlPanoramaView(Context context) {
-        super(context);
-        mContext = context;
-        init();
-    }
 
     public MyGlPanoramaView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        init();
-    }
-
-    public MyGlPanoramaView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        mContext = context;
-        init();
-    }
-
-    private void init() {
         initView();
     }
 
     private void initView() {
         LayoutInflater.from(mContext).inflate(com.zph.glpanorama.R.layout.panoramalayout, this);
         mGlSurfaceView = findViewById(com.zph.glpanorama.R.id.mIViews);
-        img = findViewById(com.zph.glpanorama.R.id.img);
-        img.setOnClickListener(view -> zero());
-
-        addText();
+        ImageView img = findViewById(com.zph.glpanorama.R.id.img);
+        img.setVisibility(INVISIBLE);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (imageWidth == 0) {
-            imageWidth = getMeasuredWidth();
-            imageHeight = getMeasuredHeight();
+        // 显示区域的宽高计算出来后再放置 InfoPopView
+        if (viewWidth == 0) {
+            viewWidth = getMeasuredWidth();
+            viewHeight = getMeasuredHeight();
             addText();
             calculateDiff();
         }
@@ -104,7 +89,6 @@ public class MyGlPanoramaView extends RelativeLayout {
                 mBall.xAngle = 50.0F;
             }
 
-            rotate();
             moveText(mBall.xAngle, mBall.yAngle);
         }
 
@@ -124,52 +108,17 @@ public class MyGlPanoramaView extends RelativeLayout {
         targetY = y;
     }
 
-    public void setText(String text) {
-        targetText = text;
-    }
-
-    private void rotate() {
-        RotateAnimation anim = new RotateAnimation(preDegree, -mBall.yAngle, 1, 0.5F, 1, 0.5F);
-        anim.setDuration(200L);
-        img.startAnimation(anim);
-        preDegree = -mBall.yAngle;
-    }
-
-    private void zero() {
-        yy = (int) ((mBall.yAngle - 90.0F) / 10.0F);
-        mHandlers.post(new Runnable() {
-            @Override
-            public void run() {
-                if (yy != 0) {
-                    if (yy > 0) {
-                        mBall.yAngle -= 10.0F;
-                        mHandlers.postDelayed(this, 16L);
-                        --yy;
-                    }
-
-                    if (yy < 0) {
-                        mBall.yAngle += 10.0F;
-                        mHandlers.postDelayed(this, 16L);
-                        ++yy;
-                    }
-                } else {
-                    mBall.yAngle = 90.0F;
-                }
-
-                mBall.xAngle = 0.0F;
-            }
-        });
-    }
-
     private void addText() {
-        testTv = new TextView(mContext);
-        testTv.setText(targetText);
-        testTv.setTextColor(Color.WHITE);
-
-        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.leftMargin = imageWidth / 2;
-        lp.topMargin = imageHeight / 2;
-        addView(testTv, lp);
+        infoPopView = new InfoPopView(mContext);
+        infoPopView.setInfo("张三", "大堂经理", "Tel:18888888888");
+        lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = viewWidth / 2;
+        lp.topMargin = viewHeight / 2;
+        addView(infoPopView, lp);
+        infoPopView.setVisibility(INVISIBLE);
+        infoPopView.setOnViewMeasuredListener((width) -> {
+            popViewWidth = width;
+        });
     }
 
     private void moveText(float xAngle, float yAngle) {
@@ -184,21 +133,19 @@ public class MyGlPanoramaView extends RelativeLayout {
         double y = 10 * xAngle;
 
         if (yAngle < 55 || yAngle > 125) {
-            testTv.setVisibility(INVISIBLE);
+            infoPopView.setVisibility(INVISIBLE);
         } else if (Math.abs(xAngle) > 35) {
-            testTv.setVisibility(INVISIBLE);
+            infoPopView.setVisibility(INVISIBLE);
         } else {
-            testTv.setVisibility(VISIBLE);
-            LayoutParams lp = (LayoutParams) testTv.getLayoutParams();
-            lp.leftMargin = (int) (imageWidth / 2 + x);
-            lp.topMargin = (int) (imageHeight / 2 + y);
-            testTv.setLayoutParams(lp);
+            infoPopView.setVisibility(VISIBLE);
+            lp.leftMargin = (int) (viewWidth / 2 - popViewWidth / 2 + x);
+            lp.topMargin = (int) (viewHeight / 2 + y);
+            infoPopView.setLayoutParams(lp);
         }
     }
 
     private void calculateDiff() {
         diffDegreeX = (targetX / 1920 - 1) * 180;
         diffDegreeY = (targetY / 960 - 1) * 90;
-        LogUtil.d(diffDegreeX, diffDegreeY);
     }
 }

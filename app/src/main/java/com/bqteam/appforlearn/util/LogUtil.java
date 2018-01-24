@@ -40,11 +40,11 @@ public class LogUtil {
         Log.d("", message);
     }
 
-    public static void d(String tag, String... s) {
-        String message = s[0];
-        for (int i = 1; i < s.length; i++) {
-            message += ", " + s[i];
-        }
-        Log.d(tag, message);
-    }
+//    public static void d(String tag, String... s) {
+//        String message = s[0];
+//        for (int i = 1; i < s.length; i++) {
+//            message += ", " + s[i];
+//        }
+//        Log.d(tag, message);
+//    }
 }
