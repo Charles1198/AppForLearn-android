@@ -28,7 +28,6 @@ public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLoca
 
     private AMap aMap;
 
-
     /**
      * 各个网点坐标
      */
@@ -106,18 +105,14 @@ public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLoca
 
     @Override
     public void onMyLocationChange(Location location) {
-        if (location == null) {
-            return;
-        }
-        if (location.getLatitude() == 0 && location.getLongitude() == 0) {
-            //定位失败
-            aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
-            aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(31.22, 121.48)));
+        LatLng myLocaion;
+        if (location != null && !(location.getLatitude() == 0 && location.getLongitude() == 0)) {
+            myLocaion = new LatLng(location.getLatitude(), location.getLongitude());
         } else {
-            aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
-            aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(location.getLatitude(),
-                    location.getLongitude())));
+            myLocaion = new LatLng(31.22, 121.48);
         }
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+        aMap.moveCamera(CameraUpdateFactory.changeLatLng(myLocaion));
 
         showPosition();
     }
