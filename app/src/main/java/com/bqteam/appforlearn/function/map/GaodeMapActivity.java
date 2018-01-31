@@ -3,6 +3,7 @@ package com.bqteam.appforlearn.function.map;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
@@ -11,7 +12,14 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.geocoder.GeocodeAddress;
+import com.amap.api.services.geocoder.GeocodeQuery;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.bqteam.appforlearn.R;
+import com.bqteam.appforlearn.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +30,8 @@ import butterknife.ButterKnife;
 /**
  * @author charles
  */
-public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLocationChangeListener {
+public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLocationChangeListener,
+        GeocodeSearch.OnGeocodeSearchListener{
     @BindView(R.id.mapView)
     MapView mapView;
 
@@ -48,11 +57,10 @@ public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLoca
     }
 
     private void initData() {
-        bankList.add(new Bank("徐汇营业厅", "上海市徐汇区", 31.20,121.48));
-        bankList.add(new Bank("奉贤营业厅", "上海市奉贤区", 31.21,121.47));
-        bankList.add(new Bank("浦东营业厅", "上海市浦东区", 31.22,121.48));
-        bankList.add(new Bank("闵行营业厅", "上海市闵行区", 31.23,121.49));
-        bankList.add(new Bank("虹口营业厅", "上海市虹口区", 31.24,121.48));
+        bankList.add(new Bank("中国银行福州路营业厅", "中国银行福州路支行"));
+        bankList.add(new Bank("中国银行九江路营业厅", "中国银行九江路支行"));
+        bankList.add(new Bank("中国银行延安东路营业厅", "中国银行延安东路支行"));
+        bankList.add(new Bank("中国银行黄埔营业厅", "中国银行黄埔支行"));
     }
 
     @Override
@@ -92,17 +100,6 @@ public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLoca
         aMap.setOnMyLocationChangeListener(this);
     }
 
-    private void showPosition() {
-        for (int i = 0; i < bankList.size(); i++) {
-            aMap.addMarker(new MarkerOptions().position(bankList.get(i).getLatLng()).title(bankList.get(i).getName()));
-        }
-
-        aMap.setOnMarkerClickListener(marker -> {
-            Toast.makeText(GaodeMapActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
-            return true;
-        });
-    }
-
     @Override
     public void onMyLocationChange(Location location) {
         LatLng myLocaion;
@@ -114,6 +111,43 @@ public class GaodeMapActivity extends AppCompatActivity implements AMap.OnMyLoca
         aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
         aMap.moveCamera(CameraUpdateFactory.changeLatLng(myLocaion));
 
-        showPosition();
+        getPosition();
+    }
+
+    private void getPosition() {
+        GeocodeSearch gs = new GeocodeSearch(this);
+        gs.setOnGeocodeSearchListener(this);
+        for (Bank bank : bankList) {
+            GeocodeQuery gq = new GeocodeQuery(bank.getAddress(), "上海市");
+            gs.getFromLocationNameAsyn(gq);
+        }
+    }
+
+    @Override
+    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+        LogUtil.d("中国银行位于：", regeocodeResult.toString());
+    }
+
+    @Override
+    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+        if (i == 1000) {
+            for (GeocodeAddress add : geocodeResult.getGeocodeAddressList()) {
+                showPosition(add);
+            }
+        } else {
+            Log.d("查询失败", i + "");
+        }
+
+    }
+
+    private void showPosition(GeocodeAddress address) {
+        String addressName = address.getFormatAddress();
+        LatLng latLng = new LatLng(address.getLatLonPoint().getLatitude(), address.getLatLonPoint().getLongitude());
+        aMap.addMarker(new MarkerOptions().position(latLng).title(addressName));
+
+        aMap.setOnMarkerClickListener(marker -> {
+            Toast.makeText(GaodeMapActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 }

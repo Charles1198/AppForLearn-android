@@ -55,5 +55,5 @@ dependencies {
     //申请权限
     compile 'gun0912.ted:tedpermission:1.0.0'
     //高德地图
-    implementation files('libs/AMap3DMap_5.7.0_AMapLocation_3.7.0_20171229.jar')
+    implementation files('libs/AMap3DMap_5.7.0_AMapSearch_5.7.0_AMapLocation_3.7.0_20171229.jar')
 }
