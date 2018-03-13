@@ -71,6 +71,16 @@ public class Image01View extends View {
 
         for (ColorItem item : colorList) {
             String s = item.getGray() > watershed ? "0" : "1";
+//            String s;
+
+//            if (item.getGray() > 150) {
+//                s = "8";
+//            } else if (item.getGray() > 75){
+//                s = "0";
+//            } else {
+//                s = "1";
+//            }
+
             canvas.drawText(s, item.getX(), item.getY(), paint);
         }
     }

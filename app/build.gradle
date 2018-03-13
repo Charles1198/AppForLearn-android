@@ -48,6 +48,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.github.CN-ZPH:weibo360panorama:v1.0.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
     //AR
     implementation files('libs/com.osterhoutgroup.api.ext.jar')
     implementation files('libs/MaxstAR.jar')
