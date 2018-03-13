@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.bqteam.appforlearn.R;
+import com.bqteam.appforlearn.function.image01.Image01Activity;
 import com.bqteam.appforlearn.function.map.GaodeMapActivity;
 import com.bqteam.appforlearn.function.maxst.PermissionCheckActivity;
 import com.bqteam.appforlearn.function.boardcast.BroadcastActivity;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         entranceList = new String[]{"上拉加载与下拉刷新", "设计模式", "Canvas", "Service", "Broadcast", "全景测试",
-                "Maxst AR 测试", "高德地图"};
+                "Maxst AR 测试", "高德地图", "01图"};
         activityList.add(RefreshLoadmoreActivity.class);
         activityList.add(DesignModeActivity.class);
         activityList.add(CanvasActivity.class);
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         activityList.add(PanoramaActivity.class);
         activityList.add(PermissionCheckActivity.class);
         activityList.add(GaodeMapActivity.class);
+        activityList.add(Image01Activity.class);
     }
 
     private void jumpToActivity(int position) {
