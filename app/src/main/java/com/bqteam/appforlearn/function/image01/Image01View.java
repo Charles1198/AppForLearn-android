@@ -17,9 +17,6 @@ import java.util.List;
  */
 
 public class Image01View extends View {
-//    private int viewWidth = 0;
-//    private int viewHeight = 0;
-
     private int watershed = 128;
     private List<ColorItem> colorList = new ArrayList<>();
 
@@ -71,16 +68,6 @@ public class Image01View extends View {
 
         for (ColorItem item : colorList) {
             String s = item.getGray() > watershed ? "0" : "1";
-//            String s;
-
-//            if (item.getGray() > 150) {
-//                s = "8";
-//            } else if (item.getGray() > 75){
-//                s = "0";
-//            } else {
-//                s = "1";
-//            }
-
             canvas.drawText(s, item.getX(), item.getY(), paint);
         }
     }
