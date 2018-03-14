@@ -64,8 +64,13 @@
         </activity>
         <activity android:name=".function.map.GaodeMapActivity">
         </activity>
-        <activity android:name=".function.image01.Image01Activity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity
+            android:name=".function.image01.Image01Activity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+        </activity>
+        <activity
+            android:name=".function.sort.SortActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
     </application>
 

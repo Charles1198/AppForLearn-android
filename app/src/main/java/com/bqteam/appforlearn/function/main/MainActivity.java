@@ -17,6 +17,7 @@ import com.bqteam.appforlearn.function.mode.DesignModeActivity;
 import com.bqteam.appforlearn.function.panorama.PanoramaActivity;
 import com.bqteam.appforlearn.function.refresh_loadmore.RefreshLoadmoreActivity;
 import com.bqteam.appforlearn.function.service.ServiceActivity;
+import com.bqteam.appforlearn.function.sort.SortActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         entranceList = new String[]{"上拉加载与下拉刷新", "设计模式", "Canvas", "Service", "Broadcast", "全景测试",
-                "Maxst AR 测试", "高德地图", "01图"};
+                "Maxst AR 测试", "高德地图", "01图", "排序"};
         activityList.add(RefreshLoadmoreActivity.class);
         activityList.add(DesignModeActivity.class);
         activityList.add(CanvasActivity.class);
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         activityList.add(PermissionCheckActivity.class);
         activityList.add(GaodeMapActivity.class);
         activityList.add(Image01Activity.class);
+        activityList.add(SortActivity.class);
     }
 
     private void jumpToActivity(int position) {
