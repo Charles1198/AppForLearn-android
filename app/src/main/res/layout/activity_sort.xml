@@ -9,21 +9,99 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@color/colorPrimary">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            android:layout_height="wrap_content"
+            app:titleTextColor="@color/text_white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/reverse"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:text="反序"
+                    android:textColor="@color/text_white"
+                    android:background="?android:selectableItemBackground"/>
+
+                <Button
+                    android:id="@+id/random"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:text="乱序"
+                    android:textColor="@color/text_white"
+                    android:background="?android:selectableItemBackground"/>
+
+                <Button
+                    android:id="@+id/sort"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:text="排序"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:textColor="@color/text_white"
+                    android:background="?android:selectableItemBackground"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.bqteam.appforlearn.function.sort.SortView
-        android:id="@+id/sortView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="8dp"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_insertion"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_shell"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_heap"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_merge"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_quick"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+            <com.bqteam.appforlearn.function.sort.SortView
+                android:id="@+id/sortView_bucket"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="8dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
