@@ -280,7 +280,6 @@ public class SortActivity extends AppCompatActivity {
         for (int i: list) {
             count.set(i, 1);
 
-
             for (int c: count) {
 
             }
