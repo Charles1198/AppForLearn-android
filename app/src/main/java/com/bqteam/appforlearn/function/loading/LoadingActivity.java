@@ -5,6 +5,10 @@ import android.os.Bundle;
 
 import com.bqteam.appforlearn.R;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author charles
  */
@@ -14,5 +18,8 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
+
+        LinkedList linkedList = new LinkedList();
+        List list = new ArrayList();
     }
 }
